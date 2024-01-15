@@ -1,0 +1,150 @@
+export const RESUME_DATA = {
+  name: "Erik Taheri",
+  initials: "ET",
+  location: "Buffalo, NY",
+  title: "Software Engineer",
+  about: "Software Engineer",
+  summary: "TODO",
+  avatar: "todo",
+  personalWebsiteUrl: "/",
+  links: [
+    {
+      name: "Personal Website",
+      url: "https://eriktaheri.com",
+      icon: "todo",
+    },
+    {
+      name: "Phone",
+      url: "tel:7163596715",
+      icon: "todo",
+    },
+    {
+      name: "Email",
+      url: "mailto:erik.taheri@gmail.com",
+      icon: "todo",
+    },
+    {
+      name: "Calendar",
+      url: "https://cal.com/erik-taheri-jdtvzm",
+      icon: "todo",
+    },
+    {
+      name: "LinkedIn",
+      url: "https://www.linkedin.com/in/erik-taheri-9659a934/",
+      icon: "todo",
+    },
+    {
+      name: "GitHub",
+      url: "https://github.com/",
+      icon: "todo",
+    },
+  ],
+  work: [
+    {
+      company: "Torch",
+      link: "https://torch.io/",
+      title: "Engineering Lead",
+      start: "2019",
+      end: "Present",
+      description: "TODO",
+    },
+    {
+      company: "Delaware North",
+      link: "https://www.delawarenorth.com/",
+      title: "System Reliability Engineer",
+      start: "2017",
+      end: "2019",
+      description: "TODO",
+    },
+    {
+      company: "Stink Studios",
+      link: "https://www.stinkstudios.com/",
+      title: "Senior Developer",
+      start: "2014",
+      end: "2017",
+    },
+  ],
+  education: [
+    {
+      school: "Georgia Institute of Technology",
+      degree: "M.S. Computer Science",
+      graduationDate: "2023",
+    },
+    {
+      school: "Canisius University",
+      degree: "B.S. Computer Science & B.S. Digital Media Arts",
+      graduationDate: "2014",
+    },
+  ],
+  certifications: [
+    {
+      name: "Amazon Web Services Developer - Associate",
+      issuer: "Amazon Web Services (AWS)",
+      date: "2018",
+    },
+    {
+      name: "Artificial Intelligence Nanodegree",
+      issuer: "Udacity",
+      date: "2017",
+    },
+  ],
+  skills: [
+    "JavaScript",
+    "TypeScript",
+    "React",
+    "Node",
+    "Python",
+    "Docker",
+    "AWS",
+  ],
+  projects: [
+    {
+      name: "Enterprise Data Explorer",
+      link: "https://torch.io/",
+      description: "TODO",
+      tags: ["Delware North", "React", "AWS"],
+    },
+    {
+      name: "Brickell City Centre",
+      link: "https://torch.io/",
+      description: "TODO",
+      tags: ["Stink Studios", "Craft CMS", "Javascript"],
+    },
+    {
+      name: "Google Presents: The Hidden World of the National Parks",
+      link: "https://torch.io/",
+      description: "TODO",
+      tags: ["Stink Studios", "React", "Google Cloud"],
+    },
+    {
+      name: "Kraft Mac and Cheese",
+      link: "https://torch.io/",
+      description: "TODO",
+      tags: ["Stink Studios", "Javascript"],
+    },
+    {
+      name: "Hands.wtf",
+      link: "https://torch.io/",
+      description: "TODO",
+      tags: ["Stink Studios", "Three.js", "Javascript", "WebGL"],
+    },
+    {
+      name: "Camaro Six App",
+      link: "https://torch.io/",
+      description: "TODO",
+      tags: ["Stink Studios", "Three.js", "Javascript", "WebGL", "AWS"],
+    },
+    {
+      name: "The Mad Men Experience",
+      link: "https://torch.io/",
+      description: "TODO",
+      tags: ["Stink Studios"],
+    },
+    {
+      name: "Google Made w/ Code",
+      link: "https://torch.io/",
+      description: "TODO",
+      tags: ["Stink Studios", "Javascript", "Google Cloud"],
+    },
+  ],
+};

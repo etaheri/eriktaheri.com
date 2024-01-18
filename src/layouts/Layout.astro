@@ -1,9 +1,10 @@
 ---
 interface Props {
   title: string;
+  route?: string;
 }
 
-const { title } = Astro.props;
+const { title, route } = Astro.props;
 
 const currentYear = new Date().getFullYear();
 
@@ -19,17 +20,27 @@ import signature from "../images/signature.png";
 <!doctype html>
 <html lang="en" class="h-full">
   <head>
-    <!-- <meta charset="UTF-8" />
-    <meta name="description" content="Astro description" />
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="generator" content={Astro.generator} />
-    <title>{title}</title> -->
-
     <SEO
       title={title}
       description="Erik Taheri is an experienced technologist based in Buffalo, NY."
       titleTemplate="%s | Erik Taheri"
+      openGraph={{
+        basic: {
+          title: "Erik Taheri is an experienced technologist based in Buffalo, NY.",
+        type: "website",
+        image: "https://eriktaheri.com/eriktaheri.jpg",
+        url: "https://eriktaheri.com",
+        },
+      }}
+      twitter={{
+        creator: "@eriktaheri",
+      }}
+      extend={{
+        // extending the default link tags
+        link: [{ rel: "icon", href: "/favicon.ico" }],
+      }}
     />
   </head>
   <body class="bg-white flex flex-col h-full">
@@ -38,7 +49,11 @@ import signature from "../images/signature.png";
     >
       <a href="/"><h1 class="font-bold">ET.</h1></a>
       <nav class="flex justify-center space-x-4">
-        <a href="/cv" class="hover:underline">CV</a>
+        <a
+          href="/resume"
+          class=`${route ==='resume' ? 'underline' : 'hover:underline'}`
+          >Resume</a
+        >
       </nav>
     </header>
     <slot />

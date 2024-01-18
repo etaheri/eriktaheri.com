@@ -15,7 +15,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ["Space Grotesk Variable", ...defaultTheme.fontFamily.sans],
-		mono: ["Space Mono", ...defaultTheme.fontFamily.mono],
+        mono: ["Space Mono", ...defaultTheme.fontFamily.mono],
       },
     },
   },

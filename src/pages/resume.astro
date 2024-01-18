@@ -5,7 +5,7 @@ import { RESUME_DATA } from "../data/resume";
 import { MapPin } from "lucide-astro";
 ---
 
-<Layout title="CV">
+<Layout title="Resume" route="resume">
   <main class="container relative mx-auto p-4 print:p-12 md:p-16">
     <section
       class="mx-auto w-full max-w-2xl space-y-8 bg-white print:space-y-6"
@@ -92,7 +92,7 @@ import { MapPin } from "lucide-astro";
         <h2 class="text-xl font-bold">Education</h2>
         {
           RESUME_DATA.education.map((education) => (
-            <div class="rounded-lg bg-card text-card-foreground">
+            <div>
               <>
                 <div class="flex flex-col space-y-1.5">
                   <div class="flex items-center justify-between gap-x-2 text-base">
@@ -118,7 +118,7 @@ import { MapPin } from "lucide-astro";
         <h2 class="text-xl font-bold">Certifications</h2>
         {
           RESUME_DATA.certifications.map((cert) => (
-            <div class="rounded-lg bg-card text-card-foreground">
+            <div>
               <>
                 <div class="flex flex-col space-y-1.5">
                   <div class="flex items-center justify-between gap-x-2 text-base">
@@ -142,7 +142,7 @@ import { MapPin } from "lucide-astro";
         >
           {
             RESUME_DATA.skills.map((skill) => (
-              <div class="inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-semibold font-mono transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-nowrap border-transparent bg-primary/80 text-primary-foreground hover:bg-primary/60">
+              <div class="inline-flex items-center px-2 py-0.5 text-xs font-semibold font-mono">
                 {skill}
               </div>
             ))
@@ -152,7 +152,7 @@ import { MapPin } from "lucide-astro";
         class="flex min-h-0 flex-col gap-y-3 print-force-new-page"
       >
         <h2 class="text-xl font-bold">Projects</h2><div
-          class="-mx-3 grid grid-cols-1 gap-3 print:grid-cols-3 print:gap-2 md:grid-cols-2 lg:grid-cols-3"
+          class="-mx-3 grid grid-cols-1 gap-3 print:grid-cols-2 print:gap-2 md:grid-cols-2"
         >
           {
             RESUME_DATA.projects.map((project) => (
@@ -162,27 +162,29 @@ import { MapPin } from "lucide-astro";
                     <div class="space-y-1">
                       <>
                         <h3 class="font-semibold tracking-tight text-base">
-                          <a
-                            href="https://consultly.com/"
-                            target="_blank"
-                            class="inline-flex items-center gap-1 hover:underline"
-                          >
-                            {project.name}
-                          </a>
+                          {project.link ? (
+                            <a
+                              href={project.link}
+                              target="_blank"
+                              class="inline-flex items-center gap-1 hover:underline"
+                            >
+                              {project.name}
+                            </a>
+                          ) : (
+                            project.name
+                          )}
                         </h3>
                         <div class="hidden font-mono text-xs underline print:visible">
                           {project.name}
                         </div>
-                        <p class="text-muted-foreground font-mono text-xs">
-                          {project.description}
-                        </p>
+                        <p class="font-mono text-xs">{project.description}</p>
                       </>
                     </div>
                   </div>
-                  <div class="text-pretty font-mono text-sm text-muted-foreground mt-auto flex">
+                  <div class="text-pretty font-mono text-sm mt-auto flex">
                     <div class="mt-2 flex flex-wrap gap-1">
                       {project.tags.map((tag) => (
-                        <div class="inline-flex items-center rounded-md border font-semibold font-mono transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-nowrap border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/60 px-1 py-0 text-[10px]">
+                        <div class="inline-flex items-center font-semibold font-mono text-nowrap px-1 py-0 text-[10px]">
                           {tag}
                         </div>
                       ))}

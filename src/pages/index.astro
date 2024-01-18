@@ -1,13 +1,77 @@
 ---
+import { Image } from "astro:assets";
+import meImg from "../images/me.jpeg";
 import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout title="Home">
-  <main class="container relative mx-auto p-4 print:p-12 md:p-16 flex flex-col flex-1 justify-center">
-    <h2 class="text-4xl">
-      Hi, I'm Erik Taheri, an experienced technologist based in Buffalo, NY. Engineering Lead at <a 
-	  class="underline"
-	  href="https://www.torch.io" target="_blank">Torch</a>.
+  <main
+    class="container relative mx-auto p-4 print:p-12 md:p-16 flex flex-col flex-1 justify-center"
+  >
+    <h2 class="text-4xl z-10">
+      Hi, I'm <a href="/resume" id="hover-me" class="underline">Erik Taheri</a>, an experienced
+      technologist based in Buffalo, NY. Engineering Lead at <a
+        class="underline"
+        href="https://www.torch.io"
+        target="_blank">Torch</a
+      >.
     </h2>
   </main>
 </Layout>
+<Image
+  src={meImg}
+  id="follow-me"
+  alt="Erik Taheri"
+  class="w-64 h-64 rounded-full follow-img"
+  loading="eager"
+/>
+
+<script>
+  import { gsap } from "gsap";
+  document.addEventListener("DOMContentLoaded", () => {
+    const isTouchDevice = "ontouchstart" in window;
+    const textElement = document.getElementById("hover-me");
+    const followImage = document.getElementById("follow-me");
+
+    if (!textElement || !followImage || isTouchDevice) {
+      return;
+    }
+
+    textElement.addEventListener("mouseenter", (e) => {
+      const { clientX, clientY } = e;
+      // const x = clientX - followImage.clientWidth / 1.25;
+      // const y = clientY - followImage.clientHeight - 20;
+      // gsap.to(followImage, { x, y, duration: 0 });
+      gsap.to(followImage, { scale: 1, display: "block", duration: 0.2, ease: "power4" });
+    });
+
+    textElement.addEventListener("mousemove", (e) => {
+      const { clientX, clientY } = e;
+
+      const x = clientX - followImage.clientWidth / 2;
+      const y = clientY - followImage.clientHeight - 20;
+      gsap.to(followImage, {
+        x,
+        y,
+        duration: 1,
+        ease: "power4",
+      });
+    });
+
+    textElement.addEventListener("mouseleave", () => {
+      // scale down first then hide
+      gsap.to(followImage, { scale: 0, duration: 0.2, delay: 0.2 }).then(() => {
+        gsap.to(followImage, { display: "none", duration: 0 });
+      });
+    });
+  });
+</script>
+
+<style>
+  .follow-img {
+    display: none;
+    position: absolute;
+    z-index: 1;
+    transform: scale(0);
+  }
+</style>

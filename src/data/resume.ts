@@ -45,11 +45,18 @@ export const RESUME_DATA = {
   ],
   work: [
     {
+      company: "Stealth Startup",
+      link: "#",
+      title: "Head of Engineering",
+      start: "2024",
+      end: "Present",
+    },
+    {
       company: "Torch",
       link: "https://torch.io/",
       title: "Engineering Lead",
       start: "2019",
-      end: "Present",
+      end: "2024",
       description:
         "Lead the development of the Torch platform, including key microservices for scheduling, assessments, integrations, and video conferencing, contributing to the facilitation of 1.7 million minutes of coaching across 37,000 sessions yearly. Spearheaded the creation of a comprehensive design system and implementation of a mono repo structure, significantly enhancing engineering quality and accelerating development processes.",
       technologies: "React, TypeScript, Python, PostgreSQL, AWS, Docker",

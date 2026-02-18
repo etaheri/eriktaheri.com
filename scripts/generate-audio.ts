@@ -1,9 +1,10 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from "node:fs";
 import { createHash } from "node:crypto";
-import { join, basename } from "node:path";
+import { join, basename, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 
 // Load .env file if present (local dev); on Cloudflare Pages env vars are injected directly
-const ROOT = join(import.meta.dirname, "..");
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const envPath = join(ROOT, ".env");
 if (existsSync(envPath)) {
   for (const line of readFileSync(envPath, "utf-8").split("\n")) {

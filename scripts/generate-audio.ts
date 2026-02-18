@@ -130,7 +130,7 @@ function chunkText(text: string, maxChars = 38000): string[] {
 
 async function generateSpeech(text: string): Promise<Buffer> {
   const chunks = chunkText(text);
-  const buffers: Buffer[] = [];
+  const buffers: Uint8Array[] = [];
 
   for (let i = 0; i < chunks.length; i++) {
     if (chunks.length > 1) {
@@ -160,7 +160,7 @@ async function generateSpeech(text: string): Promise<Buffer> {
     }
 
     const arrayBuffer = await response.arrayBuffer();
-    buffers.push(Buffer.from(arrayBuffer));
+    buffers.push(new Uint8Array(arrayBuffer));
   }
 
   return Buffer.concat(buffers);
@@ -219,7 +219,7 @@ async function main() {
     console.log(`  [gen] ${slug} (${ttsText.length} chars)`);
 
     const mp3 = await generateSpeech(ttsText);
-    writeFileSync(join(AUDIO_DIR, `${slug}.mp3`), mp3);
+    writeFileSync(join(AUDIO_DIR, `${slug}.mp3`), new Uint8Array(mp3));
     manifest[slug] = { hash };
     generated++;
   }

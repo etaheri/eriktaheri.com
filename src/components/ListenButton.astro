@@ -116,8 +116,8 @@ const { audioSrc } = Astro.props;
     });
 
     function cleanup() {
-      audio.pause();
-      audio.currentTime = 0;
+      audio!.pause();
+      audio!.currentTime = 0;
       setIdle();
     }
 

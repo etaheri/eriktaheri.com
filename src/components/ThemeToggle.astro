@@ -1,0 +1,93 @@
+---
+import { Sun, Moon, Monitor } from "@lucide/astro";
+---
+
+<div class="inline-flex items-center gap-1 rounded-full border border-[var(--color-border)] p-1">
+  <button
+    data-theme-toggle="light"
+    aria-label="Light theme"
+    class="theme-btn rounded-full p-1.5 transition-colors hover:bg-[var(--color-surface)]"
+  >
+    <Sun size={14} />
+  </button>
+  <button
+    data-theme-toggle="dark"
+    aria-label="Dark theme"
+    class="theme-btn rounded-full p-1.5 transition-colors hover:bg-[var(--color-surface)]"
+  >
+    <Moon size={14} />
+  </button>
+  <button
+    data-theme-toggle="system"
+    aria-label="System theme"
+    class="theme-btn rounded-full p-1.5 transition-colors hover:bg-[var(--color-surface)]"
+  >
+    <Monitor size={14} />
+  </button>
+</div>
+
+<script>
+  function initThemeToggle() {
+    const buttons = document.querySelectorAll("[data-theme-toggle]");
+
+    function getStoredTheme(): string {
+      return localStorage.getItem("theme") || "system";
+    }
+
+    function applyTheme(theme: string) {
+      const isDark =
+        theme === "dark" ||
+        (theme === "system" &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches);
+      document.documentElement.classList.toggle("dark", isDark);
+      document.querySelector('meta[name="theme-color"]')?.setAttribute("content", isDark ? "#0a0a0a" : "#ffffff");
+    }
+
+    function updateButtons(active: string) {
+      buttons.forEach((btn) => {
+        const value = (btn as HTMLElement).dataset.themeToggle;
+        btn.classList.toggle(
+          "bg-[var(--color-surface)]",
+          value === active
+        );
+        btn.classList.toggle(
+          "ring-1",
+          value === active
+        );
+        btn.classList.toggle(
+          "ring-[var(--color-border)]",
+          value === active
+        );
+        btn.classList.toggle("text-[var(--color-text)]", value === active);
+        btn.classList.toggle(
+          "text-[var(--color-text-muted)]",
+          value !== active
+        );
+      });
+    }
+
+    const current = getStoredTheme();
+    applyTheme(current);
+    updateButtons(current);
+
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const theme = (btn as HTMLElement).dataset.themeToggle!;
+        localStorage.setItem("theme", theme);
+        applyTheme(theme);
+        updateButtons(theme);
+      });
+    });
+
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", () => {
+        if (getStoredTheme() === "system") {
+          applyTheme("system");
+        }
+      });
+  }
+
+  initThemeToggle();
+  document.addEventListener("astro:after-swap", initThemeToggle);
+</script>

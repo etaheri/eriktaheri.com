@@ -1,0 +1,63 @@
+---
+import { getCollection, render } from "astro:content";
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/Container.astro";
+import BackToPrev from "@components/BackToPrev.astro";
+
+export async function getStaticPaths() {
+  const projects = (await getCollection("projects")).filter(
+    (project) => !project.data.draft
+  );
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: project,
+  }));
+}
+
+const project = Astro.props;
+const { Content } = await render(project);
+---
+
+<Layout title={project.data.title} description={project.data.description}>
+  <main class="flex-1 py-16">
+    <Container>
+      <div class="animate" style="animation-delay: 0ms;">
+        <BackToPrev href="/projects" label="Back to Projects" />
+      </div>
+
+      <article class="mt-8">
+        <header class="animate mb-10" style="animation-delay: 100ms;">
+          <h1 class="text-3xl font-semibold tracking-tight mb-3">
+            {project.data.title}
+          </h1>
+          <div class="flex items-center gap-3 text-sm text-[var(--color-text-muted)]">
+            {project.data.demoURL && (
+              <a
+                href={project.data.demoURL}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="hover:text-[var(--color-text)] transition-colors underline underline-offset-4"
+              >
+                Demo
+              </a>
+            )}
+            {project.data.repoURL && (
+              <a
+                href={project.data.repoURL}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="hover:text-[var(--color-text)] transition-colors underline underline-offset-4"
+              >
+                Repo
+              </a>
+            )}
+          </div>
+        </header>
+
+        <div class="animate prose" style="animation-delay: 200ms;">
+          <Content />
+        </div>
+      </article>
+    </Container>
+  </main>
+</Layout>

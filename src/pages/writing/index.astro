@@ -1,0 +1,59 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/Container.astro";
+import ArrowCard from "@components/ArrowCard.astro";
+import { WRITING } from "@consts";
+import { readingTimeFromMarkdown } from "@lib/utils";
+
+const posts = (await getCollection("writing"))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const grouped = posts.reduce(
+  (acc, post) => {
+    const year = post.data.date.getFullYear().toString();
+    (acc[year] ??= []).push(post);
+    return acc;
+  },
+  {} as Record<string, typeof posts>
+);
+
+const years = Object.keys(grouped).sort((a, b) => Number(b) - Number(a));
+---
+
+<Layout title={WRITING.TITLE} description={WRITING.DESCRIPTION}>
+  <main class="flex-1 py-16">
+    <Container>
+      <h1
+        class="animate text-3xl font-semibold tracking-tight mb-12"
+        style="animation-delay: 0ms;"
+      >
+        Writing
+      </h1>
+
+      {
+        years.map((year, i) => (
+          <section class="animate mb-10" style={`animation-delay: ${(i + 1) * 100}ms;`}>
+            <h2 class="text-sm font-mono uppercase tracking-widest text-[var(--color-text-muted)] mb-2">
+              {year}
+            </h2>
+            {grouped[year].map((post) => (
+              <ArrowCard
+                title={post.data.title}
+                description={post.data.description}
+                href={`/writing/${post.id}`}
+                date={post.data.date}
+                readTime={readingTimeFromMarkdown(post.body ?? "")}
+              />
+            ))}
+          </section>
+        ))
+      }
+
+      {posts.length === 0 && (
+        <p class="text-[var(--color-text-muted)]">No posts yet.</p>
+      )}
+    </Container>
+  </main>
+</Layout>

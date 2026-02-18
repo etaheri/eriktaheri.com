@@ -1,0 +1,128 @@
+---
+interface Props {
+  audioSrc?: string;
+}
+
+const { audioSrc } = Astro.props;
+---
+
+{audioSrc && (
+  <span id="listen-player" class="inline-flex items-center gap-2">
+    <button
+      id="listen-btn"
+      type="button"
+      class="inline-flex items-center gap-1.5 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors cursor-pointer"
+      aria-label="Listen to article"
+    >
+      <svg id="listen-icon-play" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="6 3 20 12 6 21 6 3"></polygon>
+      </svg>
+      <svg id="listen-icon-pause" class="hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="14" y="4" width="4" height="16" rx="1"></rect>
+        <rect x="6" y="4" width="4" height="16" rx="1"></rect>
+      </svg>
+      <span id="listen-label">Listen</span>
+    </button>
+
+    <span id="listen-time" class="hidden text-xs tabular-nums text-[var(--color-text-muted)]"></span>
+
+    <input
+      id="listen-progress"
+      type="range"
+      min="0"
+      max="100"
+      value="0"
+      class="hidden h-1 w-20 cursor-pointer accent-[var(--color-text-muted)]"
+      aria-label="Seek audio"
+    />
+
+    <audio id="listen-audio" src={audioSrc} preload="metadata"></audio>
+  </span>
+)}
+
+<script>
+  function initListenButton() {
+    const btn = document.getElementById("listen-btn") as HTMLButtonElement | null;
+    const audio = document.getElementById("listen-audio") as HTMLAudioElement | null;
+    if (!btn || !audio) return;
+
+    const iconPlay = document.getElementById("listen-icon-play")!;
+    const iconPause = document.getElementById("listen-icon-pause")!;
+    const label = document.getElementById("listen-label")!;
+    const progress = document.getElementById("listen-progress") as HTMLInputElement;
+    const timeEl = document.getElementById("listen-time")!;
+
+    function formatTime(seconds: number): string {
+      const m = Math.floor(seconds / 60);
+      const s = Math.floor(seconds % 60);
+      return `${m}:${s.toString().padStart(2, "0")}`;
+    }
+
+    function showControls() {
+      progress.classList.remove("hidden");
+      progress.classList.add("inline-block");
+      timeEl.classList.remove("hidden");
+      timeEl.classList.add("inline");
+    }
+
+    function setPlaying() {
+      iconPlay.classList.add("hidden");
+      iconPause.classList.remove("hidden");
+      label.textContent = "Pause";
+      showControls();
+    }
+
+    function setPaused() {
+      iconPlay.classList.remove("hidden");
+      iconPause.classList.add("hidden");
+      label.textContent = "Resume";
+    }
+
+    function setIdle() {
+      iconPlay.classList.remove("hidden");
+      iconPause.classList.add("hidden");
+      label.textContent = "Listen";
+      progress.classList.add("hidden");
+      progress.classList.remove("inline-block");
+      timeEl.classList.add("hidden");
+      timeEl.classList.remove("inline");
+      progress.value = "0";
+    }
+
+    audio.addEventListener("timeupdate", () => {
+      if (audio.duration) {
+        progress.value = String((audio.currentTime / audio.duration) * 100);
+        const remaining = audio.duration - audio.currentTime;
+        timeEl.textContent = `-${formatTime(remaining)}`;
+      }
+    });
+
+    audio.addEventListener("ended", setIdle);
+
+    progress.addEventListener("input", () => {
+      if (audio.duration) {
+        audio.currentTime = (Number(progress.value) / 100) * audio.duration;
+      }
+    });
+
+    btn.addEventListener("click", () => {
+      if (audio.paused) {
+        audio.play();
+        setPlaying();
+      } else {
+        audio.pause();
+        setPaused();
+      }
+    });
+
+    function cleanup() {
+      audio.pause();
+      audio.currentTime = 0;
+      setIdle();
+    }
+
+    document.addEventListener("astro:before-swap", cleanup, { once: true });
+  }
+
+  document.addEventListener("astro:page-load", initListenButton);
+</script>

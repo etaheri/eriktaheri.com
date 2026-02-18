@@ -1,4 +1,4 @@
-import { Globe, Github, Phone, Calendar, Linkedin, Mail } from "lucide-astro";
+import { Globe, GithubIcon, Phone, Calendar, LinkedinIcon, Mail } from "@lucide/astro";
 
 export const RESUME_DATA = {
   name: "Erik Taheri",
@@ -35,12 +35,12 @@ export const RESUME_DATA = {
     {
       name: "LinkedIn",
       url: "https://www.linkedin.com/in/erik-taheri-9659a934/",
-      icon: Linkedin,
+      icon: LinkedinIcon,
     },
     {
       name: "GitHub",
       url: "https://github.com/etaheri",
-      icon: Github,
+      icon: GithubIcon,
     },
   ],
   work: [

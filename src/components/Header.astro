@@ -1,0 +1,45 @@
+---
+import Container from "./Container.astro";
+
+const { pathname } = Astro.url;
+
+const navItems = [
+  { label: "writing", href: "/writing" },
+  { label: "work", href: "/work" },
+  { label: "projects", href: "/projects" },
+];
+---
+
+<header class="py-8 print:hidden">
+  <Container>
+    <nav class="flex items-center justify-between">
+      <a
+        href="/"
+        class="text-lg font-bold tracking-tight text-[var(--color-text)] hover:text-[var(--color-text-muted)] transition-colors"
+      >
+        ET.
+      </a>
+      <div class="flex items-center gap-6">
+        {
+          navItems.map(({ label, href }) => {
+            const isActive =
+              pathname === href || pathname.startsWith(href + "/");
+            return (
+              <a
+                href={href}
+                class:list={[
+                  "text-sm transition-opacity",
+                  isActive
+                    ? "text-[var(--color-text)] underline underline-offset-4"
+                    : "text-[var(--color-text-muted)] hover:text-[var(--color-text)]",
+                ]}
+              >
+                {label}
+              </a>
+            );
+          })
+        }
+      </div>
+    </nav>
+  </Container>
+</header>

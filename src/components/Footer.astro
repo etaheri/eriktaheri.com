@@ -1,0 +1,66 @@
+---
+import { Image } from "astro:assets";
+import Container from "./Container.astro";
+import ThemeToggle from "./ThemeToggle.astro";
+import signature from "../images/signature.png";
+import { SOCIALS } from "@consts";
+
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="py-12 mt-auto print:hidden">
+  <Container>
+    <div class="flex flex-col items-center gap-6">
+      <Image
+        src={signature}
+        alt="Erik Taheri"
+        class="h-14 w-auto opacity-80 dark:invert"
+      />
+      <form
+        action="https://buttondown.com/api/emails/embed-subscribe/eriktaheri"
+        method="post"
+        class="flex w-full max-w-sm"
+      >
+        <input
+          type="email"
+          name="email"
+          placeholder="your@email.com"
+          required
+          class="flex-1 min-w-0 px-3 py-2 text-sm bg-[var(--color-surface)] border border-[var(--color-border)] rounded-l-md text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-text-muted)] transition-colors"
+        />
+        <button
+          type="submit"
+          class="px-4 py-2 text-sm font-medium bg-[var(--color-text)] text-[var(--color-bg)] rounded-r-md hover:opacity-90 transition-opacity cursor-pointer"
+        >
+          Subscribe
+        </button>
+      </form>
+
+      <div class="flex items-center gap-4 text-sm text-[var(--color-text-muted)]">
+        {
+          SOCIALS.map((social, i) => (
+            <>
+              <a
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="hover:text-[var(--color-text)] transition-colors"
+              >
+                {social.name}
+              </a>
+              {i < SOCIALS.length - 1 && (
+                <span class="text-[var(--color-border)]">/</span>
+              )}
+            </>
+          ))
+        }
+      </div>
+      <div class="flex items-center gap-4">
+        <span class="text-xs text-[var(--color-text-muted)]">
+          &copy; {currentYear} Erik Taheri
+        </span>
+        <ThemeToggle />
+      </div>
+    </div>
+  </Container>
+</footer>

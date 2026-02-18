@@ -1,0 +1,70 @@
+---
+import { getCollection, render } from "astro:content";
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/Container.astro";
+import { WORK } from "@consts";
+import { dateRange } from "@lib/utils";
+
+const work = (await getCollection("work")).sort(
+  (a, b) => new Date(b.data.dateStart).valueOf() - new Date(a.data.dateStart).valueOf()
+);
+
+const rendered = await Promise.all(
+  work.map(async (entry) => {
+    const { Content } = await render(entry);
+    return { entry, Content };
+  })
+);
+---
+
+<Layout title={WORK.TITLE} description={WORK.DESCRIPTION}>
+  <main class="flex-1 py-16">
+    <Container>
+      <h1
+        class="animate text-3xl font-semibold tracking-tight mb-12"
+        style="animation-delay: 0ms;"
+      >
+        Work
+      </h1>
+
+      <div class="space-y-12">
+        {
+          rendered.map(({ entry, Content }, i) => (
+            <article
+              class="animate"
+              style={`animation-delay: ${(i + 1) * 100}ms;`}
+            >
+              <div class="flex items-start justify-between gap-4 mb-1">
+                <div>
+                  <h2 class="text-lg font-semibold">
+                    {entry.data.link ? (
+                      <a
+                        href={entry.data.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="hover:underline underline-offset-2"
+                      >
+                        {entry.data.company}
+                      </a>
+                    ) : (
+                      entry.data.company
+                    )}
+                  </h2>
+                  <p class="text-sm text-[var(--color-text-muted)]">
+                    {entry.data.role}
+                  </p>
+                </div>
+                <span class="shrink-0 text-sm font-mono text-[var(--color-text-muted)] tabular-nums">
+                  {dateRange(entry.data.dateStart, entry.data.dateEnd)}
+                </span>
+              </div>
+              <div class="prose mt-3 text-sm">
+                <Content />
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </Container>
+  </main>
+</Layout>

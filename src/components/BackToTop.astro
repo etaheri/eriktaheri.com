@@ -1,0 +1,36 @@
+---
+import { ArrowUp } from "@lucide/astro";
+---
+
+<button
+  id="back-to-top"
+  aria-label="Back to top"
+  class="fixed bottom-6 right-6 z-50 rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] p-2 text-[var(--color-text-muted)] opacity-0 transition-all duration-300 hover:text-[var(--color-text)] pointer-events-none"
+>
+  <ArrowUp size={16} />
+</button>
+
+<script>
+  function initBackToTop() {
+    const btn = document.getElementById("back-to-top");
+    if (!btn) return;
+
+    const toggle = () => {
+      const show = window.scrollY > 300;
+      btn.classList.toggle("opacity-0", !show);
+      btn.classList.toggle("pointer-events-none", !show);
+      btn.classList.toggle("opacity-100", show);
+      btn.classList.toggle("pointer-events-auto", show);
+    };
+
+    window.addEventListener("scroll", toggle, { passive: true });
+    toggle();
+
+    btn.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
+
+  initBackToTop();
+  document.addEventListener("astro:after-swap", initBackToTop);
+</script>

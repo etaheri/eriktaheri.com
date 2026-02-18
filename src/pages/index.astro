@@ -1,19 +1,98 @@
 ---
+import { getCollection } from "astro:content";
 import { Image } from "astro:assets";
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/Container.astro";
+import ArrowCard from "@components/ArrowCard.astro";
+import { SITE, HOME } from "@consts";
+import { readingTimeFromMarkdown } from "@lib/utils";
 import meImg from "../images/me.jpeg";
-import Layout from "../layouts/Layout.astro";
+
+const writing = (await getCollection("writing"))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, SITE.NUM_POSTS_ON_HOMEPAGE);
+
+const projects = (await getCollection("projects"))
+  .filter((project) => !project.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, SITE.NUM_PROJECTS_ON_HOMEPAGE);
 ---
 
-<Layout title="Home">
-  <main
-    class="container relative mx-auto p-4 print:p-12 md:p-16 flex flex-col flex-1 justify-center"
-  >
-    <h2 class="text-4xl z-10">
-      Hi, I'm <a href="/resume" id="hover-me" class="underline">Erik Taheri</a>, an experienced
-      technologist based in Buffalo, NY. Head of Engineering at a stealth startup.
-    </h2>
+<Layout title={HOME.TITLE} description={HOME.DESCRIPTION}>
+  <main class="flex flex-col flex-1">
+    <!-- Hero -->
+    <section class="flex flex-1 items-center py-16 md:py-24">
+      <Container>
+        <h1
+          class="animate text-3xl md:text-4xl leading-snug tracking-tight font-semibold"
+          style="animation-delay: 0ms;"
+        >
+          Hi, I'm <a href="/work" id="hover-me" class="underline underline-offset-4 decoration-2 decoration-[var(--color-text-muted)] hover:decoration-[var(--color-text)] transition-colors">Erik Taheri</a>, an experienced technologist based in Buffalo, NY. Head of Engineering at <a href="https://citrine.co" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4 decoration-2 decoration-[var(--color-text-muted)] hover:decoration-[var(--color-text)] transition-colors">Citrine</a>.
+        </h1>
+      </Container>
+    </section>
+
+    <!-- Latest Posts -->
+    {writing.length > 0 && (
+      <section class="py-12 border-t border-[var(--color-border)]">
+        <Container>
+          <div class="animate flex items-center justify-between mb-2" style="animation-delay: 100ms;">
+            <h2 class="text-sm font-mono uppercase tracking-widest text-[var(--color-text-muted)]">
+              Latest Posts
+            </h2>
+            <a
+              href="/writing"
+              class="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors"
+            >
+              View all &rarr;
+            </a>
+          </div>
+          <div class="animate" style="animation-delay: 200ms;">
+            {writing.map((post) => (
+              <ArrowCard
+                title={post.data.title}
+                description={post.data.description}
+                href={`/writing/${post.id}`}
+                date={post.data.date}
+                readTime={readingTimeFromMarkdown(post.body ?? "")}
+              />
+            ))}
+          </div>
+        </Container>
+      </section>
+    )}
+
+    <!-- Recent Projects -->
+    {projects.length > 0 && (
+      <section class="py-12 border-t border-[var(--color-border)]">
+        <Container>
+          <div class="animate flex items-center justify-between mb-2" style="animation-delay: 300ms;">
+            <h2 class="text-sm font-mono uppercase tracking-widest text-[var(--color-text-muted)]">
+              Recent Projects
+            </h2>
+            <a
+              href="/projects"
+              class="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors"
+            >
+              View all &rarr;
+            </a>
+          </div>
+          <div class="animate" style="animation-delay: 400ms;">
+            {projects.map((project) => (
+              <ArrowCard
+                title={project.data.title}
+                description={project.data.description}
+                href={`/projects/${project.id}`}
+              />
+            ))}
+          </div>
+        </Container>
+      </section>
+    )}
   </main>
 </Layout>
+
 <Image
   src={meImg}
   id="follow-me"
@@ -24,38 +103,31 @@ import Layout from "../layouts/Layout.astro";
 
 <script>
   import { gsap } from "gsap";
-  document.addEventListener("DOMContentLoaded", () => {
+
+  document.addEventListener("astro:page-load", () => {
     const isTouchDevice = "ontouchstart" in window;
     const textElement = document.getElementById("hover-me");
     const followImage = document.getElementById("follow-me");
 
-    if (!textElement || !followImage || isTouchDevice) {
-      return;
-    }
+    if (!textElement || !followImage || isTouchDevice) return;
 
-    textElement.addEventListener("mouseenter", (e) => {
-      const { clientX, clientY } = e;
-      // const x = clientX - followImage.clientWidth / 1.25;
-      // const y = clientY - followImage.clientHeight - 20;
-      // gsap.to(followImage, { x, y, duration: 0 });
-      gsap.to(followImage, { scale: 1, display: "block", duration: 0.2, ease: "power4" });
-    });
-
-    textElement.addEventListener("mousemove", (e) => {
-      const { clientX, clientY } = e;
-
-      const x = clientX - followImage.clientWidth / 2;
-      const y = clientY - followImage.clientHeight - 20;
+    textElement.addEventListener("mouseenter", () => {
       gsap.to(followImage, {
-        x,
-        y,
-        duration: 1,
+        scale: 1,
+        display: "block",
+        duration: 0.2,
         ease: "power4",
       });
     });
 
+    textElement.addEventListener("mousemove", (e) => {
+      const { clientX, clientY } = e;
+      const x = clientX - followImage.clientWidth / 2;
+      const y = clientY - followImage.clientHeight - 20;
+      gsap.to(followImage, { x, y, duration: 1, ease: "power4" });
+    });
+
     textElement.addEventListener("mouseleave", () => {
-      // scale down first then hide
       gsap.to(followImage, { scale: 0, duration: 0.2, delay: 0.2 }).then(() => {
         gsap.to(followImage, { display: "none", duration: 0 });
       });
@@ -66,8 +138,9 @@ import Layout from "../layouts/Layout.astro";
 <style>
   .follow-img {
     display: none;
-    position: absolute;
-    z-index: 1;
+    position: fixed;
+    z-index: 50;
     transform: scale(0);
+    pointer-events: none;
   }
 </style>

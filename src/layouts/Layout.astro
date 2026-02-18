@@ -1,20 +1,21 @@
 ---
 interface Props {
   title: string;
-  route?: string;
+  description?: string;
 }
 
-const { title, route } = Astro.props;
-
-const currentYear = new Date().getFullYear();
+const { title, description = "Erik Taheri is an experienced technologist based in Buffalo, NY." } = Astro.props;
 
 import "@fontsource-variable/space-grotesk";
+import "@fontsource-variable/source-serif-4";
+import "../styles/global.css";
 
-import { Image } from "astro:assets";
-
+import { ClientRouter } from "astro:transitions";
 import { SEO } from "astro-seo";
 
-import signature from "../images/signature.png";
+import Header from "@components/Header.astro";
+import Footer from "@components/Footer.astro";
+import BackToTop from "@components/BackToTop.astro";
 ---
 
 <!doctype html>
@@ -24,12 +25,11 @@ import signature from "../images/signature.png";
     <meta name="viewport" content="width=device-width" />
     <SEO
       title={title}
-      description="Erik Taheri is an experienced technologist based in Buffalo, NY."
+      description={description}
       titleTemplate="%s | Erik Taheri"
       openGraph={{
         basic: {
-          title:
-            "Erik Taheri is an experienced technologist based in Buffalo, NY.",
+          title: title,
           type: "website",
           image: "https://eriktaheri-com.pages.dev/eriktaheri.jpg",
           url: "https://eriktaheri.com",
@@ -39,32 +39,59 @@ import signature from "../images/signature.png";
         creator: "@eriktaheri",
       }}
       extend={{
-        // extending the default link tags
-        link: [{ rel: "icon", href: "/favicon.ico" }],
+        link: [
+          { rel: "icon", href: "/favicon.ico" },
+          {
+            rel: "alternate",
+            type: "application/rss+xml",
+            title: "Erik Taheri",
+            href: "/rss.xml",
+          },
+        ],
       }}
     />
+    <ClientRouter />
+    <meta name="theme-color" content="#ffffff" />
+    <script is:inline>
+      (function () {
+        const theme = localStorage.getItem("theme") || "system";
+        const isDark =
+          theme === "dark" ||
+          (theme === "system" &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches);
+        if (isDark) document.documentElement.classList.add("dark");
+        document.querySelector('meta[name="theme-color"]').setAttribute("content", isDark ? "#0a0a0a" : "#ffffff");
+      })();
+    </script>
   </head>
-  <body class="bg-white flex flex-col h-full">
-    <header
-      class="flex flex-row items-center justify-between px-8 py-8 print:hidden"
-    >
-      <a href="/"><h1 class="font-bold">ET.</h1></a>
-      <nav class="flex justify-center space-x-4">
-        <a
-          href="/resume"
-          class=`${route ==='resume' ? 'underline' : 'hover:underline'}`
-          >Resume</a
-        >
-      </nav>
-    </header>
+  <body
+    class="flex min-h-full flex-col bg-[var(--color-bg)] text-[var(--color-text)] antialiased transition-colors duration-300"
+  >
+    <Header />
     <slot />
-    <footer class="text-center text-gray-500 text-sm mt-8 print:hidden">
-      <Image
-        class="h-16 w-auto mx-auto mb-4"
-        src={signature}
-        alt="Erik Taheri"
-      /><p>&copy; {currentYear} Erik Taheri</p>
-      <p>Go Bills!</p>
-    </footer>
+    <Footer />
+    <BackToTop />
+
+    <script>
+      function initAnimations() {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("show");
+              }
+            });
+          },
+          { threshold: 0.1 }
+        );
+
+        document.querySelectorAll(".animate").forEach((el) => {
+          observer.observe(el);
+        });
+      }
+
+      initAnimations();
+      document.addEventListener("astro:after-swap", initAnimations);
+    </script>
   </body>
 </html>

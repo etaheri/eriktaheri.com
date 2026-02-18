@@ -1,0 +1,40 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/Container.astro";
+import ArrowCard from "@components/ArrowCard.astro";
+import { PROJECTS } from "@consts";
+
+const projects = (await getCollection("projects"))
+  .filter((project) => !project.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<Layout title={PROJECTS.TITLE} description={PROJECTS.DESCRIPTION}>
+  <main class="flex-1 py-16">
+    <Container>
+      <h1
+        class="animate text-3xl font-semibold tracking-tight mb-12"
+        style="animation-delay: 0ms;"
+      >
+        Projects
+      </h1>
+
+      <div class="animate" style="animation-delay: 100ms;">
+        {
+          projects.map((project) => (
+            <ArrowCard
+              title={project.data.title}
+              description={project.data.description}
+              href={`/projects/${project.id}`}
+            />
+          ))
+        }
+      </div>
+
+      {projects.length === 0 && (
+        <p class="text-[var(--color-text-muted)]">No projects yet.</p>
+      )}
+    </Container>
+  </main>
+</Layout>

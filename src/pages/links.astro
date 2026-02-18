@@ -1,43 +1,128 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import Container from "@components/Container.astro";
 import { Image } from "astro:assets";
 import meImg from "../images/me.jpeg";
-import { Github, Linkedin } from "lucide-astro";
+import { SITE, SOCIALS } from "@consts";
+import {
+  GithubIcon,
+  LinkedinIcon,
+  CalendarIcon,
+  NewspaperIcon,
+  BriefcaseIcon,
+  CodeIcon,
+  MailIcon,
+} from "@lucide/astro";
+
+const github = SOCIALS.find((s) => s.name === "GitHub")!;
+const linkedin = SOCIALS.find((s) => s.name === "LinkedIn")!;
+const calendar = SOCIALS.find((s) => s.name === "Calendar")!;
+
+const links = [
+  { label: "Writing", href: "/writing", icon: "newspaper", external: false },
+  { label: "Work", href: "/work", icon: "briefcase", external: false },
+  { label: "Projects", href: "/projects", icon: "code", external: false },
+  {
+    label: "Book a Call",
+    href: calendar.href,
+    icon: "calendar",
+    external: true,
+  },
+  {
+    label: "Email",
+    href: `mailto:${SITE.EMAIL}`,
+    icon: "mail",
+    external: true,
+  },
+];
+
+const socials = [
+  { ...github, icon: "github" },
+  { ...linkedin, icon: "linkedin" },
+  { ...calendar, icon: "calendar" },
+];
 ---
 
 <Layout title="Links">
-  <main class="flex flex-col items-center justify-center p-4 pt-10 flex-1">
-    <Image src={meImg} alt="Erik Taheri" class="w-32 h-32 rounded-full" />
-    <h1 class="text-2xl mt-4">Erik Taheri</h1>
-    <section class="text-sm max-w-[400px] text-center">
-      <p>Technologist based in Buffalo, NY.</p>
-    </section>
-    <ul class="flex flex-col gap-y-4 pt-10 min-w-[300px]">
-      <li
-        class="border border-black border-2 w-full text-center p-4 text-xl font-semibold"
+  <main class="flex flex-col items-center justify-center p-4 py-16 flex-1">
+    <Container class="flex flex-col items-center">
+      <!-- Profile -->
+      <div class="animate" style="animation-delay: 0ms;">
+        <Image
+          src={meImg}
+          alt="Erik Taheri"
+          class="w-28 h-28 rounded-full border-2 border-[var(--color-border)]"
+        />
+      </div>
+      <div class="animate mt-5" style="animation-delay: 50ms;">
+        <h1 class="text-2xl font-semibold tracking-tight text-center">
+          {SITE.NAME}
+        </h1>
+      </div>
+      <p
+        class="animate text-sm text-[var(--color-text-muted)] text-center max-w-[320px] mt-1"
+        style="animation-delay: 100ms;"
       >
-        <a href="/" class="block">My Site</a>
-      </li>
-    </ul>
-    <ul class="flex gap-4 items-center justify-center flex-wrap pt-10">
-      <li class="border border-black border-2 rounded-full">
-        <a
-          href="https://github.com/etaheri"
-          class="block p-4"
-          aria-label="GitHub"
+        Head of Engineering at <a href="https://citrine.co" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4 decoration-2 decoration-[var(--color-text-muted)] hover:decoration-[var(--color-text)] transition-colors">Citrine</a>. Based in Buffalo, NY.
+      </p>
+
+      <!-- Links -->
+      <div class="w-full max-w-[400px] mt-12">
+        <h2
+          class="animate text-xs font-mono uppercase tracking-widest text-[var(--color-text-muted)] mb-3"
+          style="animation-delay: 150ms;"
         >
-          <Github size="32" aria-label="GitHub" />
-          </a
-        >
-      </li><li class="border border-black border-2 rounded-full">
-        <a
-          href="https://www.linkedin.com/in/erik-taheri-9659a934/"
-          class="block p-4"
-          aria-label="LinkedIn"
-        >
-          <Linkedin size="32" aria-label="LinkedIn" />
-        </a>
-      </li>
-    </ul>
+          Links
+        </h2>
+        <ul class="flex flex-col gap-3">
+          {links.map((link, i) => (
+            <li
+              class="animate"
+              style={`animation-delay: ${200 + i * 50}ms;`}
+            >
+              <a
+                href={link.href}
+                target={link.external ? "_blank" : undefined}
+                rel={link.external ? "noopener noreferrer" : undefined}
+                class="flex items-center gap-3 w-full px-4 py-3 border border-[var(--color-border)] transition-colors hover:bg-[var(--color-surface)] group"
+              >
+                <span class="text-[var(--color-text-muted)] group-hover:text-[var(--color-text)] transition-colors">
+                  {link.icon === "newspaper" && <NewspaperIcon size="18" />}
+                  {link.icon === "briefcase" && <BriefcaseIcon size="18" />}
+                  {link.icon === "code" && <CodeIcon size="18" />}
+                  {link.icon === "calendar" && <CalendarIcon size="18" />}
+                  {link.icon === "mail" && <MailIcon size="18" />}
+                </span>
+                <span class="text-sm font-medium">{link.label}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Socials -->
+      <div class="w-full max-w-[400px] mt-12">
+        <ul class="flex gap-3">
+          {socials.map((social, i) => (
+            <li
+              class="animate"
+              style={`animation-delay: ${450 + i * 50}ms;`}
+            >
+              <a
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex items-center justify-center w-12 h-12 border border-[var(--color-border)] rounded-full transition-colors hover:bg-[var(--color-surface)]"
+                aria-label={social.name}
+              >
+                {social.icon === "github" && <GithubIcon size="20" />}
+                {social.icon === "linkedin" && <LinkedinIcon size="20" />}
+                {social.icon === "calendar" && <CalendarIcon size="20" />}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </Container>
   </main>
 </Layout>

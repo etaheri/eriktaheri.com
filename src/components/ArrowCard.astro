@@ -1,0 +1,44 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  href: string;
+  date?: Date;
+  readTime?: string;
+}
+
+const { title, description, href, date, readTime } = Astro.props;
+
+const formatted = date
+  ? date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "2-digit",
+      year: "numeric",
+    })
+  : undefined;
+---
+
+<a
+  href={href}
+  class="group flex items-start gap-4 py-4 -mx-3 px-3 rounded-lg transition-colors duration-200 hover:bg-[var(--color-surface)]"
+>
+  {formatted && (
+    <div class="shrink-0 w-28 pt-0.5 font-mono text-sm text-[var(--color-text-muted)] tabular-nums">
+      <span>{formatted}</span>
+      {readTime && <div class="text-xs mt-0.5">{readTime}</div>}
+    </div>
+  )}
+  <div class="flex-1 min-w-0">
+    <div class="flex items-center gap-2">
+      <span class="font-semibold text-[var(--color-text)] group-hover:text-[var(--color-text)]">
+        {title}
+      </span>
+      <span class="opacity-0 -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 text-[var(--color-text-muted)]">
+        &rarr;
+      </span>
+    </div>
+    <p class="mt-0.5 text-sm text-[var(--color-text-muted)] line-clamp-1">
+      {description}
+    </p>
+  </div>
+</a>

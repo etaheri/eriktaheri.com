@@ -27,6 +27,7 @@
     "astro-seo": "^1.1.0",
     "clsx": "^2.1.1",
     "gsap": "^3.12.4",
+    "satori": "^0.19.2",
     "sharp": "^0.33.2",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.7.0"

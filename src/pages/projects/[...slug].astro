@@ -16,9 +16,10 @@ export async function getStaticPaths() {
 
 const project = Astro.props;
 const { Content } = await render(project);
+const ogImage = new URL(`/og/projects/${project.id}.png`, Astro.site).href;
 ---
 
-<Layout title={project.data.title} description={project.data.description}>
+<Layout title={project.data.title} description={project.data.description} image={ogImage}>
   <main class="flex-1 py-16">
     <Container>
       <div class="animate" style="animation-delay: 0ms;">

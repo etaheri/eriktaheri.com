@@ -2,9 +2,11 @@
 interface Props {
   title: string;
   description?: string;
+  image?: string;
 }
 
-const { title, description = "Erik Taheri is an experienced technologist based in Buffalo, NY." } = Astro.props;
+const { title, description = "Erik Taheri is an experienced technologist based in Buffalo, NY.", image } = Astro.props;
+const ogImage = image ?? "https://eriktaheri-com.pages.dev/eriktaheri.jpg";
 
 import "@fontsource-variable/space-grotesk";
 import "@fontsource-variable/source-serif-4";
@@ -31,7 +33,7 @@ import BackToTop from "@components/BackToTop.astro";
         basic: {
           title: title,
           type: "website",
-          image: "https://eriktaheri-com.pages.dev/eriktaheri.jpg",
+          image: ogImage,
           url: "https://eriktaheri.com",
         },
       }}

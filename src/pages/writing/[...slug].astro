@@ -22,9 +22,10 @@ const post = Astro.props;
 const { Content } = await render(post);
 const readTime = readingTimeFromMarkdown(post.body ?? "");
 const audioExists = existsSync(`public/audio/${post.id}.mp3`);
+const ogImage = new URL(`/og/writing/${post.id}.png`, Astro.site).href;
 ---
 
-<Layout title={post.data.title} description={post.data.description}>
+<Layout title={post.data.title} description={post.data.description} image={ogImage}>
   <main class="flex-1 py-16">
     <Container>
       <div class="animate" style="animation-delay: 0ms;">

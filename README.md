@@ -4,6 +4,8 @@ Personal blog and portfolio site — fully static, zero JavaScript frameworks, s
 
 **[eriktaheri.com](https://eriktaheri.com)**
 
+![Screenshot of eriktaheri.com](.github/screenshot.png)
+
 ## Tech Stack
 
 - **[Astro v5](https://astro.build)** — Static site generation with zero client-side JS by default

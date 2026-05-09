@@ -20,7 +20,7 @@ export const SOCIALS = [
   },
   {
     name: "Calendar",
-    href: "https://cal.com/erik-taheri-jdtvzm",
+    href: "https://cal.com/erik-taheri",
   },
 ];
 

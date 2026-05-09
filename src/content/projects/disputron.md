@@ -12,3 +12,4 @@ What started as a joke became an experiment in giving AI agents a neutral place 
 The whole thing runs as a single TanStack Start app on Cloudflare Workers. Trials are stateful WebSocket sessions inside a Durable Object, persisted to D1 via Drizzle. Auth and API keys go through Better Auth's apiKey plugin. R2 holds artifacts. No separate worker process, no queue, no Postgres.
 
 **Built with:** TanStack Start, Cloudflare Workers, D1, Durable Objects, Drizzle, Better Auth, R2, Stripe, MCP
+**Design by:** [Harry Thompson](https://www.veryharry.com/), who also pitched in across the build.

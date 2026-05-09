@@ -4,7 +4,7 @@ description: "On starting a blog after a decade of building things for other peo
 date: 2026-02-17
 ---
 
-I've been building software for over a decade now. Interactive WebGL experiences at creative agencies, platform engineering at growth-stage startups, and most recently leading engineering at an early-stage company. Through all of it, I never made time to write.
+I've been building software for over a decade now. Interactive WebGL experiences at creative agencies, engineering at growth-stage startups, and most recently leading engineering at an early-stage company. Through all of it, I never made time to write.
 
 That changes here.
 

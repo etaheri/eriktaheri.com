@@ -97,7 +97,13 @@ const { audioSrc } = Astro.props;
       }
     });
 
-    audio.addEventListener("ended", setIdle);
+    audio.addEventListener("ended", () => {
+      window.posthog?.capture("audio_playback_completed", {
+        audio_src: audio.src,
+        page_path: window.location.pathname,
+      });
+      setIdle();
+    });
 
     progress.addEventListener("input", () => {
       if (audio.duration) {
@@ -108,6 +114,10 @@ const { audioSrc } = Astro.props;
     btn.addEventListener("click", () => {
       if (audio.paused) {
         audio.play();
+        window.posthog?.capture("audio_playback_started", {
+          audio_src: audio.src,
+          page_path: window.location.pathname,
+        });
         setPlaying();
       } else {
         audio.pause();

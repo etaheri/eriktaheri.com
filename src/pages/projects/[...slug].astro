@@ -38,6 +38,8 @@ const ogImage = new URL(`/og/projects/${project.id}.png`, Astro.site).href;
                 target="_blank"
                 rel="noopener noreferrer"
                 class="hover:text-[var(--color-text)] transition-colors underline underline-offset-4"
+                data-ph-event="project_demo_clicked"
+                data-ph-project={project.data.title}
               >
                 Demo
               </a>
@@ -48,6 +50,8 @@ const ogImage = new URL(`/og/projects/${project.id}.png`, Astro.site).href;
                 target="_blank"
                 rel="noopener noreferrer"
                 class="hover:text-[var(--color-text)] transition-colors underline underline-offset-4"
+                data-ph-event="project_repo_clicked"
+                data-ph-project={project.data.title}
               >
                 Repo
               </a>
@@ -62,3 +66,25 @@ const ogImage = new URL(`/og/projects/${project.id}.png`, Astro.site).href;
     </Container>
   </main>
 </Layout>
+
+<script is:inline define:vars={{ projectTitle: project.data.title, projectId: project.id }}>
+  function initProjectTracking() {
+    window.posthog?.capture('project_viewed', {
+      project_title: projectTitle,
+      project_id: projectId,
+    });
+
+    document.querySelectorAll('[data-ph-event]').forEach(function (el) {
+      el.removeEventListener('click', el._phHandler);
+      el._phHandler = function () {
+        window.posthog?.capture(el.dataset.phEvent, {
+          project_title: el.dataset.phProject,
+          href: el.getAttribute('href'),
+        });
+      };
+      el.addEventListener('click', el._phHandler);
+    });
+  }
+
+  document.addEventListener('astro:page-load', initProjectTracking);
+</script>

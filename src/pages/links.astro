@@ -85,6 +85,8 @@ const socials = [
                 target={link.external ? "_blank" : undefined}
                 rel={link.external ? "noopener noreferrer" : undefined}
                 class="flex items-center gap-3 w-full px-4 py-3 border border-[var(--color-border)] transition-colors hover:bg-[var(--color-surface)] group"
+                data-ph-link-label={link.external ? link.label : undefined}
+                data-ph-link-href={link.external ? link.href : undefined}
               >
                 <span class="text-[var(--color-text-muted)] group-hover:text-[var(--color-text)] transition-colors">
                   {link.icon === "newspaper" && <NewspaperIcon size="18" />}
@@ -126,3 +128,20 @@ const socials = [
     </Container>
   </main>
 </Layout>
+
+<script is:inline>
+  function initLinksTracking() {
+    document.querySelectorAll('[data-ph-link-label]').forEach(function (el) {
+      el.removeEventListener('click', el._phHandler);
+      el._phHandler = function () {
+        window.posthog?.capture('links_page_item_clicked', {
+          label: el.dataset.phLinkLabel,
+          href: el.dataset.phLinkHref,
+        });
+      };
+      el.addEventListener('click', el._phHandler);
+    });
+  }
+
+  document.addEventListener('astro:page-load', initLinksTracking);
+</script>

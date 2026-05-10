@@ -53,3 +53,13 @@ const ogImage = new URL(`/og/writing/${post.id}.png`, Astro.site).href;
     </Container>
   </main>
 </Layout>
+
+<script is:inline define:vars={{ postTitle: post.data.title, postId: post.id, readTime }}>
+  document.addEventListener('astro:page-load', function () {
+    window.posthog?.capture('writing_post_viewed', {
+      post_title: postTitle,
+      post_id: postId,
+      read_time: readTime,
+    });
+  });
+</script>

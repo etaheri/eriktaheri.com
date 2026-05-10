@@ -45,6 +45,8 @@ const currentYear = new Date().getFullYear();
                 target="_blank"
                 rel="noopener noreferrer"
                 class="hover:text-[var(--color-text)] transition-colors"
+                data-social-name={social.name}
+                data-social-href={social.href}
               >
                 {social.name}
               </a>
@@ -64,3 +66,32 @@ const currentYear = new Date().getFullYear();
     </div>
   </Container>
 </footer>
+
+<script is:inline>
+  function initFooterTracking() {
+    var form = document.querySelector('footer form[action*="buttondown"]');
+    if (form) {
+      form.removeEventListener('submit', form._phSubmitHandler);
+      form._phSubmitHandler = function () {
+        var email = form.querySelector('input[type="email"]');
+        window.posthog?.capture('newsletter_subscribed', {
+          email: email ? email.value : undefined
+        });
+      };
+      form.addEventListener('submit', form._phSubmitHandler);
+    }
+
+    document.querySelectorAll('footer a[data-social-name]').forEach(function (el) {
+      el.removeEventListener('click', el._phClickHandler);
+      el._phClickHandler = function () {
+        window.posthog?.capture('social_link_clicked', {
+          social_name: el.dataset.socialName,
+          href: el.dataset.socialHref
+        });
+      };
+      el.addEventListener('click', el._phClickHandler);
+    });
+  }
+
+  document.addEventListener('astro:page-load', initFooterTracking);
+</script>

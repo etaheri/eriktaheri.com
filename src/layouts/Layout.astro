@@ -3,10 +3,57 @@ interface Props {
   title: string;
   description?: string;
   image?: string;
+  type?: "website" | "article";
+  publishedTime?: Date;
 }
 
-const { title, description = "Erik Taheri is an experienced technologist based in Buffalo, NY.", image } = Astro.props;
-const ogImage = image ?? "https://eriktaheri-com.pages.dev/eriktaheri.jpg";
+import { SITE, SOCIALS } from "@consts";
+
+const {
+  title,
+  description = "Erik Taheri is an experienced technologist based in Buffalo, NY.",
+  image,
+  type = "website",
+  publishedTime,
+} = Astro.props;
+const ogImage = image ?? new URL("/eriktaheri.jpg", Astro.site).href;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site).href;
+const isHome = Astro.url.pathname === "/";
+
+const jsonLd =
+  type === "article"
+    ? {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        headline: title,
+        description,
+        image: ogImage,
+        url: canonicalURL,
+        ...(publishedTime && { datePublished: publishedTime.toISOString() }),
+        author: { "@type": "Person", name: SITE.NAME, url: "https://eriktaheri.com" },
+        publisher: { "@type": "Person", name: SITE.NAME, url: "https://eriktaheri.com" },
+      }
+    : {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            name: SITE.NAME,
+            url: "https://eriktaheri.com",
+            description,
+          },
+          ...(isHome
+            ? [
+                {
+                  "@type": "Person",
+                  name: SITE.NAME,
+                  url: "https://eriktaheri.com",
+                  sameAs: SOCIALS.map((s) => s.href),
+                },
+              ]
+            : []),
+        ],
+      };
 
 import "@fontsource-variable/space-grotesk";
 import "@fontsource-variable/source-serif-4";
@@ -30,16 +77,37 @@ import PostHog from "@components/posthog.astro";
       title={title}
       description={description}
       titleTemplate="%s | Erik Taheri"
+      canonical={canonicalURL}
       openGraph={{
         basic: {
           title: title,
-          type: "website",
+          type: type,
           image: ogImage,
-          url: "https://eriktaheri.com",
+          url: canonicalURL,
         },
+        optional: {
+          description: description,
+          siteName: SITE.NAME,
+        },
+        image: {
+          alt: title,
+        },
+        ...(type === "article" && publishedTime
+          ? {
+              article: {
+                publishedTime: publishedTime.toISOString(),
+                authors: [SITE.NAME],
+              },
+            }
+          : {}),
       }}
       twitter={{
+        card: "summary_large_image",
         creator: "@eriktaheri",
+        title: title,
+        description: description,
+        image: ogImage,
+        imageAlt: title,
       }}
       extend={{
         link: [
@@ -53,6 +121,7 @@ import PostHog from "@components/posthog.astro";
         ],
       }}
     />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
     <ClientRouter />
     <PostHog />
     <meta name="theme-color" content="#ffffff" />

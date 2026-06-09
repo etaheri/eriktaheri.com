@@ -25,7 +25,7 @@ const audioExists = existsSync(`public/audio/${post.id}.mp3`);
 const ogImage = new URL(`/og/writing/${post.id}.png`, Astro.site).href;
 ---
 
-<Layout title={post.data.title} description={post.data.description} image={ogImage}>
+<Layout title={post.data.title} description={post.data.description} image={ogImage} type="article" publishedTime={post.data.date}>
   <main class="flex-1 py-16">
     <Container>
       <div class="animate" style="animation-delay: 0ms;">

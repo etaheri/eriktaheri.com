@@ -1,0 +1,224 @@
+---
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import { Maximize2, X } from "@lucide/astro";
+
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  caption?: string;
+  /** Break out modestly wider than the prose column. Defaults to false (column width). */
+  wide?: boolean;
+  /** Cap height and center, for tall/portrait images (e.g. phone screenshots). */
+  portrait?: boolean;
+}
+
+const { src, alt, caption, wide = false, portrait = false } = Astro.props;
+---
+
+<figure
+  class:list={[
+    "fig not-prose my-10",
+    { "fig--wide": wide, "fig--portrait": portrait },
+  ]}
+>
+  <button type="button" class="fig-trigger" aria-label={`Expand image: ${alt}`}>
+    <Image
+      src={src}
+      alt={alt}
+      widths={[768, 1200, 1600]}
+      sizes="(min-width: 860px) 800px, 92vw"
+      class="fig-img"
+    />
+    <span class="fig-badge" aria-hidden="true">
+      <Maximize2 size={16} />
+    </span>
+  </button>
+
+  {caption && <figcaption class="fig-caption">{caption}</figcaption>}
+
+  <dialog class="fig-dialog" aria-label={alt}>
+    <Image src={src} alt={alt} class="fig-dialog-img" loading="lazy" />
+    <button type="button" class="fig-close" aria-label="Close image">
+      <X size={20} />
+    </button>
+  </dialog>
+</figure>
+
+<style>
+  /* Modestly break the figure out of the 65ch prose column, centered on the viewport. */
+  .fig--wide {
+    width: min(800px, 92vw);
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .fig-trigger {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: zoom-in;
+    position: relative;
+    border-radius: 0.5rem;
+  }
+
+  .fig-img {
+    width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-border);
+    display: block;
+  }
+
+  /* Tall images: cap height and center instead of stretching to column width. */
+  .fig--portrait {
+    text-align: center;
+  }
+
+  .fig--portrait .fig-trigger {
+    display: inline-block;
+    width: auto;
+    cursor: zoom-in;
+  }
+
+  .fig--portrait .fig-img {
+    width: auto;
+    max-width: 100%;
+    max-height: min(70vh, 600px);
+  }
+
+  .fig-badge {
+    position: absolute;
+    bottom: 0.75rem;
+    right: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.375rem;
+    color: var(--color-text);
+    background: color-mix(in srgb, var(--color-surface) 80%, transparent);
+    border: 1px solid var(--color-border);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+
+  .fig-trigger:hover .fig-badge,
+  .fig-trigger:focus-visible .fig-badge {
+    opacity: 1;
+  }
+
+  .fig-trigger:focus-visible {
+    outline: 2px solid var(--color-text);
+    outline-offset: 3px;
+  }
+
+  .fig-caption {
+    margin-top: 0.75rem;
+    text-align: center;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--color-text-muted);
+  }
+
+  /* Lightbox */
+  .fig-dialog {
+    padding: 0;
+    border: none;
+    background: transparent;
+    max-width: 100vw;
+    max-height: 100vh;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .fig-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.85);
+  }
+
+  .fig-dialog[open] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .fig-dialog-img {
+    max-width: 95vw;
+    max-height: 95vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 0.5rem;
+    cursor: zoom-out;
+  }
+
+  .fig-close {
+    position: fixed;
+    top: 1.25rem;
+    right: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.5rem;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    cursor: pointer;
+  }
+
+  .fig-close:hover,
+  .fig-close:focus-visible {
+    background: rgba(255, 255, 255, 0.22);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .fig-dialog[open] {
+      animation: fig-fade 0.2s ease;
+    }
+    .fig-dialog[open]::backdrop {
+      animation: fig-fade 0.2s ease;
+    }
+  }
+
+  @keyframes fig-fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+</style>
+
+<script>
+  function initFigures() {
+    document.querySelectorAll<HTMLElement>(".fig-trigger").forEach((trigger) => {
+      if (trigger.dataset.figBound) return;
+      trigger.dataset.figBound = "true";
+
+      const figure = trigger.closest(".fig");
+      const dialog = figure?.querySelector<HTMLDialogElement>(".fig-dialog");
+      if (!dialog) return;
+
+      trigger.addEventListener("click", () => dialog.showModal());
+
+      // Close on backdrop click, on the image itself (zoom-out), or close button.
+      dialog.addEventListener("click", (event) => {
+        const target = event.target as HTMLElement;
+        if (target === dialog || target.closest(".fig-dialog-img, .fig-close")) {
+          dialog.close();
+        }
+      });
+    });
+  }
+
+  document.addEventListener("astro:page-load", initFigures);
+</script>

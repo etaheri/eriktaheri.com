@@ -1,6 +1,7 @@
 ---
 import { existsSync } from "node:fs";
 import { getCollection, render } from "astro:content";
+import { Image } from "astro:assets";
 import Layout from "@layouts/Layout.astro";
 import Container from "@components/Container.astro";
 import BackToPrev from "@components/BackToPrev.astro";
@@ -45,6 +46,19 @@ const ogImage = new URL(`/og/writing/${post.id}.png`, Astro.site).href;
             <ListenButton audioSrc={audioExists ? `/audio/${post.id}.mp3` : undefined} />
           </div>
         </header>
+
+        {
+          post.data.heroImage && (
+            <figure class="animate mb-10" style="animation-delay: 150ms;">
+              <Image
+                src={post.data.heroImage}
+                alt={post.data.heroAlt ?? post.data.title}
+                class="w-full h-auto rounded-lg border border-[var(--color-border)]"
+                loading="eager"
+              />
+            </figure>
+          )
+        }
 
         <div class="animate prose" style="animation-delay: 200ms;">
           <Content />

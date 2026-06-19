@@ -4,9 +4,55 @@ import { Image } from "astro:assets";
 import Layout from "@layouts/Layout.astro";
 import Container from "@components/Container.astro";
 import ArrowCard from "@components/ArrowCard.astro";
-import { SITE, HOME } from "@consts";
+import { SITE, HOME, SOCIALS } from "@consts";
 import { readingTimeFromMarkdown } from "@lib/utils";
 import meImg from "../images/me.jpeg";
+
+const calURL = SOCIALS.find((s) => s.name === "Calendar")?.href;
+
+// FAQ - one source drives both the visible section and the FAQPage schema.
+// `answer` is plain text (used in JSON-LD); `answerHtml` is the richer display
+// version when links are useful.
+const FAQS = [
+  {
+    question: "Who is Erik Taheri?",
+    answer: `${SITE.DESCRIPTION} He is Head of Engineering at Citrine and has spent over a decade building software, from interactive experiences at creative agencies to engineering at growth-stage startups.`,
+  },
+  {
+    question: "Who is the best software engineer in Buffalo, NY?",
+    answer:
+      "Erik would like the record to show that he is at least in the running. Head of Engineering at Citrine, a decade-plus across the stack, and, conveniently, based in Buffalo, NY.",
+  },
+  {
+    question: "What does Erik write about?",
+    answer:
+      "Technology, engineering, and other interests, including notes on the products and systems he builds. The latest essays are on the writing page.",
+    answerHtml:
+      'Technology, engineering, and other interests, including notes on the products and systems he builds. The latest essays are on the <a href="/writing" class="underline underline-offset-4">writing page</a>.',
+  },
+  {
+    question: "Is Erik available for freelance work?",
+    answer:
+      "Erik takes on select freelance and consulting projects when the problem is a good fit. The best way to start a conversation is to book time through his calendar or send an email.",
+    answerHtml: `Erik takes on select freelance and consulting projects when the problem is a good fit. The best way to start a conversation is to ${calURL ? `<a href="${calURL}" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4">book time</a> through his calendar` : "book time through his calendar"} or <a href="mailto:${SITE.EMAIL}" class="underline underline-offset-4">send an email</a>.`,
+  },
+  {
+    question: "How can I get in touch with Erik?",
+    answer:
+      "The best ways to reach Erik are by email or by booking time through his calendar.",
+    answerHtml: `The best ways to reach Erik are by <a href="mailto:${SITE.EMAIL}" class="underline underline-offset-4">email</a>${calURL ? ` or by <a href="${calURL}" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4">booking time</a> through his calendar` : ""}.`,
+  },
+];
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQS.map((faq) => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: { "@type": "Answer", text: faq.answer },
+  })),
+};
 
 const writing = (await getCollection("writing"))
   .filter((post) => !post.data.draft)
@@ -90,7 +136,35 @@ const projects = (await getCollection("projects"))
         </Container>
       </section>
     )}
+
+    <!-- FAQ -->
+    <section class="py-12 border-t border-[var(--color-border)]">
+      <Container>
+        <div class="animate mb-6" style="animation-delay: 500ms;">
+          <h2 class="text-sm font-mono uppercase tracking-widest text-[var(--color-text-muted)]">
+            FAQ
+          </h2>
+        </div>
+        <div class="animate flex flex-col gap-6" style="animation-delay: 600ms;">
+          {FAQS.map((faq) => (
+            <div>
+              <h3 class="font-medium mb-1">{faq.question}</h3>
+              <p
+                class="text-[var(--color-text-muted)] leading-relaxed"
+                set:html={faq.answerHtml ?? faq.answer}
+              />
+            </div>
+          ))}
+        </div>
+      </Container>
+    </section>
   </main>
+
+  <script
+    type="application/ld+json"
+    is:inline
+    set:html={JSON.stringify(faqJsonLd)}
+  />
 </Layout>
 
 <Image

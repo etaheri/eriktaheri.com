@@ -19,7 +19,7 @@ export async function GET() {
     "",
     `> ${SITE.DESCRIPTION}`,
     "",
-    "Erik is a software engineer and technology leader with over a decade of experience building products across the stack, from interactive WebGL experiences at creative agencies to platform engineering at growth-stage startups.",
+    "Erik is a software engineer and technology leader with over a decade of experience building products across the stack, from interactive experiences at creative agencies to engineering at growth-stage startups.",
     "",
     "## Links",
     "",

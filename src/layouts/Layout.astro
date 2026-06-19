@@ -5,6 +5,7 @@ interface Props {
   image?: string;
   type?: "website" | "article";
   publishedTime?: Date;
+  modifiedTime?: Date;
 }
 
 import { SITE, SOCIALS } from "@consts";
@@ -15,10 +16,35 @@ const {
   image,
   type = "website",
   publishedTime,
+  modifiedTime,
 } = Astro.props;
 const ogImage = image ?? new URL("/eriktaheri.jpg", Astro.site).href;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site).href;
 const isHome = Astro.url.pathname === "/";
+
+// Freshness signal: articles use their own publish/update date; every other
+// page falls back to the build time so AEO crawlers always see a dateModified.
+const buildDate = new Date();
+const pageModified = (modifiedTime ?? publishedTime ?? buildDate).toISOString();
+
+const personId = "https://eriktaheri.com/#person";
+const websiteId = "https://eriktaheri.com/#website";
+
+const person = {
+  "@type": "Person",
+  "@id": personId,
+  name: SITE.NAME,
+  url: "https://eriktaheri.com",
+  jobTitle: "Head of Engineering",
+  description: SITE.DESCRIPTION,
+  image: new URL("/eriktaheri.jpg", Astro.site).href,
+  worksFor: {
+    "@type": "Organization",
+    name: "Citrine",
+    url: "https://citrine.co",
+  },
+  sameAs: SOCIALS.map((s) => s.href),
+};
 
 const jsonLd =
   type === "article"
@@ -29,7 +55,9 @@ const jsonLd =
         description,
         image: ogImage,
         url: canonicalURL,
+        mainEntityOfPage: { "@type": "WebPage", "@id": canonicalURL },
         ...(publishedTime && { datePublished: publishedTime.toISOString() }),
+        dateModified: pageModified,
         author: { "@type": "Person", name: SITE.NAME, url: "https://eriktaheri.com" },
         publisher: { "@type": "Person", name: SITE.NAME, url: "https://eriktaheri.com" },
       }
@@ -38,20 +66,23 @@ const jsonLd =
         "@graph": [
           {
             "@type": "WebSite",
+            "@id": websiteId,
             name: SITE.NAME,
             url: "https://eriktaheri.com",
-            description,
+            description: SITE.DESCRIPTION,
+            publisher: { "@id": personId },
           },
-          ...(isHome
-            ? [
-                {
-                  "@type": "Person",
-                  name: SITE.NAME,
-                  url: "https://eriktaheri.com",
-                  sameAs: SOCIALS.map((s) => s.href),
-                },
-              ]
-            : []),
+          {
+            "@type": isHome ? "ProfilePage" : "WebPage",
+            "@id": canonicalURL,
+            url: canonicalURL,
+            name: title,
+            description,
+            isPartOf: { "@id": websiteId },
+            dateModified: pageModified,
+            ...(isHome ? { about: { "@id": personId } } : {}),
+          },
+          person,
         ],
       };
 
